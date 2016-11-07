@@ -1,5 +1,6 @@
 #include "MyShapes.h"
 
+//////////////////////// Plane //////////////////////////////////
 
 Plane::Plane(Vec normal, float d, Color color)
 {
@@ -91,5 +92,34 @@ Vec Sphere::normal(Vec &point)
 {
 	Vec n = point - center;
 	n.Normalize();
+	return n;
+}
+
+///////////////////// Triangle ////////////////////////////
+
+Triangle::Triangle(Vec p1, Vec p2, Vec p3, Color color)
+{
+	this->p1 = p1;
+	this->p2 = p2;
+	this->p3 = p3;
+
+	this->c = color;
+}
+
+void Triangle::test(Ray& ra, HitData& hit)
+{
+	
+}
+
+Vec Triangle::normal(Vec &point)
+{
+	Vec A = p2 - p1;
+	Vec B = p3 - p1;
+
+	Vec n;
+	n.x = (A.y*B.z) - (A.z*B.y);
+	n.y = (A.z*B.x) - (A.x*B.z);
+	n.z = (A.x*B.y) - (A.y*B.x);
+
 	return n;
 }

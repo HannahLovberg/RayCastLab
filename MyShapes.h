@@ -32,6 +32,11 @@ public:
 class Triangle : public Shape
 {
 	Vec p1, p2, p3, nor;	//as in three point and the normal
-	
+	Vec edge1, edge2;
+
+public:
+	Triangle(Vec p1, Vec p2, Vec p3, Color color);
+	void test(Ray& ray, HitData& hit);
+	Vec normal(Vec &point);
 	
 };
