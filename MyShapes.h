@@ -19,8 +19,8 @@ public:
 class Sphere : public Shape
 {
 	Vec center;			//Center point
-	float radiusW;		//radious width
-	float radiusD;		//radius depth
+	float radius;		//radious width
+	float radius2;		//radius^2
 
 public:
 	Sphere(Vec center, float radius, Color color);
@@ -32,6 +32,6 @@ public:
 class Triangle : public Shape
 {
 	Vec p1, p2, p3, nor;	//as in three point and the normal
-	Vec 
+	
 	
 };
