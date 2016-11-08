@@ -172,3 +172,27 @@ Vec Triangle::normal(Vec &point)
 {
 	return nor;
 }
+
+
+OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW, Color color)
+{
+	this->center = center;
+	this->u = u;
+	this->v = v;
+	
+	this->halfU = halfU;
+	this->halfV = halfV;
+	this->halfW = halfW;
+
+	this->c = color;
+}
+
+OBB::OBB(Vec center, float halfu, float halfv, float halfw, Color color)
+{
+	this->center = center;
+	this->halfU = halfu;
+	this->halfV = halfv;
+	this->halfW = halfw;
+
+	this->c = color;
+}
