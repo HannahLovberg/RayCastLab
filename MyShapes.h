@@ -43,3 +43,28 @@ public:
 	Vec normal(Vec &point);
 	
 };
+
+class OBB : public Shape
+{
+	Vec center;		//The center of the cube.
+	Vec u;			//vectors uvw (xyz axis)
+	Vec v;
+	Vec w;
+
+	Vec Pu, Puo;	
+	Vec Pv, Pvo;
+	Vec Pw, Pwo;
+
+	float halfU;
+	float halfV;
+	float halfW;
+
+public:
+	
+	OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW, Color color);
+	// Center point, lenght U vector, length V vector, length W vector, color
+	OBB(Vec center, float halfu, float halfv, float halfw, Color color);
+
+	void test(Ray& ray, HitData& hit);
+	Vec normal(Vec& point);
+};
