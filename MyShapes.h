@@ -66,8 +66,8 @@ class OBB : public Shape
 public:
 	
 	OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW, Color color);
-	// Center point, lenght U vector, length V vector, length W vector, color
-	OBB(Vec center, float halfu, float halfv, float halfw, Color color);
+	
+	OBB(Vec center, float halfU, float halfV, float halfW, Color color);
 
 	void test(Ray& ray, HitData& hit);
 	Vec normal(Vec& point);

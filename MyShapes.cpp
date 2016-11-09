@@ -197,15 +197,29 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->c = color;
 }
 
-//OBB::OBB(Vec center, float halfu, float halfv, float halfw, Color color)
-//{
-//	this->center = center;
-//	this->halfU = halfu;
-//	this->halfV = halfv;
-//	this->halfW = halfw;
-//
-//	this->c = color;
-//}
+OBB::OBB(Vec center, float halfU, float halfV, float halfW, Color color)
+{
+	this->center = center;
+
+	this->u = { 1,0,0 };
+	this->v = { 0,1,0 };
+	this->w = { 0,0,1 };
+
+	this->halfU = halfU;
+	this->halfV = halfV;
+	this->halfW = halfW;
+
+	this->Pu = center + u*halfU;
+	this->Puo = center - u*halfU;
+
+	this->Pv = center + v*halfV;
+	this->Pvo = center - v*halfV;
+
+	this->Pw = center + w*halfW;
+	this->Pwo = center - w*halfW;
+
+	this->c = color;
+}
 
 void OBB::test(Ray& ray, HitData& hit)
 {
@@ -275,5 +289,5 @@ Vec OBB::normal(Vec& point)
 		}
 		
 	}
-	
+	return Vec { 0,0,0 };
 }
