@@ -242,7 +242,7 @@ void OBB::test(Ray& ray, HitData& hit)
 	float e;			
 	float f;
 
-	float epsilon = 0.0000000001;		//that funny e thing in the book that's not an e
+	float epsilon = 0.0001;		//that funny e thing in the book that's not an e
 
 	Vec p = center - ray.o;				//the vector between the centerpoint and the start of the ray
 
@@ -251,12 +251,12 @@ void OBB::test(Ray& ray, HitData& hit)
 		e = norm[i].Dot(p);			//parallel with the p vector (c--->hit)
 		f = norm[i].Dot(ray.d);		//parallel wih the ray	
 
-		if (f > epsilon)
+		if (abs(f) > epsilon)
 		{
 			t1 = (e + half[i]) / f;
 			t2 = (e - half[i]) / f;
 
-			if (t1 > t2) std::swap(t1, t2);
+			if (t1 > t2) std::swap(t1, t2);		//Make sure the smallest value is first
 			if (t1 > tMin) tMin = t1;
 			if (t2 < tMax) tMax = t2;
 
@@ -265,9 +265,13 @@ void OBB::test(Ray& ray, HitData& hit)
 
 		}
 
-		else if (-e - half[i] > 0 || -e + half[i] < 0) return;		//Checks if the point is within the slab?
+		else if (-e - half[i] > 0 || -e + half[i] < 0) return;	
+		// If the ray is parallel with the slabs it checks if the ray is within another slab. 
+		//For an example if the ray hits the box straight on, being parallel with two of the slabs
+		//then this line checks if the ray hits the thrid slab, if not that means there's no hit
+
 	}
-	if (tMin > 0)	//Is the shape in front of the camera?
+	if (tMin > 0)	//Checks if th shape is in front of the camera
 	{
 		intersect = tMin;		//otherwise this value will be INFINITY and ignored.
 	}
@@ -285,16 +289,20 @@ void OBB::test(Ray& ray, HitData& hit)
 
 Vec OBB::normal(Vec& point)
 {
+	Vec n = { 0,0,0 };
+
+	float epsilon = 0.0001;
+
 	Vec norm[6] = { u, u*-1, v, v*-1, w, w*-1 };
 	Vec mP[6] = { Pu, Puo, Pv, Pvo, Pw, Pwo };
 
 	for (int i = 0; i < 6; i++)
 	{
-		if (norm[i].Dot(point - mP[i]) == 0)		//The center of each plane dot the vector 
+		if (abs(norm[i].Dot(point - mP[i])) < epsilon)		//The center of each plane dot the vector 
 		{											//between the hitP and the center of the plane
-			return norm[i];							//If this is 0 then it's a hit
+			n = norm[i];							//If this is 0 then it's a hit
 		}
 		
 	}
-	return Vec { 0,0,0 };		//If not just return any Vector
+	return n;		//If not just return {0,0,0}
 }
