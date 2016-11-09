@@ -180,7 +180,7 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->u = u;
 	this->v = v;
 
-	//Fortsätt med pu pv osv...
+	//Fortsätt med pu pv osv... 
 	
 	this->halfU = halfU;
 	this->halfV = halfV;
