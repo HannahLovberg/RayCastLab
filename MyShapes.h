@@ -47,16 +47,16 @@ public:
 class OBB : public Shape
 {
 	Vec center;		//The center of the cube.
+
 	Vec u;			//vectors uvw (xyz axis)
 	Vec v;
 	Vec w;
 
-	Vec Pu, Puo;	
-	Vec Pv, Pvo;
-	Vec Pw, Pwo;
+	Vec offsetUN = center - u;
+	Vec offsetUP = center + u;
 
 	float halfU;
-	float halfV;
+	float halfV;	//half-distance
 	float halfW;
 
 public:

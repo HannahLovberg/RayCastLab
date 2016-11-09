@@ -179,9 +179,8 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->center = center;
 	this->u = u;
 	this->v = v;
+	this->w = w;
 
-	//Fortsätt med pu pv osv... 
-	
 	this->halfU = halfU;
 	this->halfV = halfV;
 	this->halfW = halfW;
@@ -189,12 +188,79 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->c = color;
 }
 
-OBB::OBB(Vec center, float halfu, float halfv, float halfw, Color color)
-{
-	this->center = center;
-	this->halfU = halfu;
-	this->halfV = halfv;
-	this->halfW = halfw;
+//OBB::OBB(Vec center, float halfu, float halfv, float halfw, Color color)
+//{
+//	this->center = center;
+//	this->halfU = halfu;
+//	this->halfV = halfv;
+//	this->halfW = halfw;
+//
+//	this->c = color;
+//}
 
-	this->c = color;
+void OBB::test(Ray& ray, HitData& hit)
+{
+	float tMin = -INFINITY;
+	float tMax = INFINITY;
+
+	float t1, t2;
+
+	float intersect = tMax;
+
+	Vec norm[3] = { u,v,w };
+	float half[3] = { halfU, halfV, halfW };
+	float e;
+	float f;
+
+	float ee = 0.000000001;
+
+	Vec p = center - ray.o;	
+
+	for (int i = 0; i < 3; i++)
+	{
+		e = norm[i].Dot(p);
+		f = norm[i].Dot(ray.d);
+
+		if (f > ee)
+		{
+			t1 = (e + half[i]) / f;
+			t2 = (e - half[i]) / f;
+
+			if (t1 > t2) std::swap(t1, t2);
+			if (t1 > tMin) tMin = t1;
+			if (t2 < tMax) tMax = t2;
+
+			if (tMin > tMax) return;
+			if (tMax < 0) return;
+
+		}
+
+		else if (-e - half[i] > 0 || -e + half[i] < 0) return;
+	}
+	if (tMin > 0)
+	{
+		intersect = tMin;
+	}
+
+	if (intersect < hit.t || hit.t < 0)
+	{
+		hit.t = intersect;
+		hit.color = c;
+		hit.lastShape = this;
+		
+	}
+	
+}
+
+Vec OBB::normal(Vec& point)
+{
+	Vec Pu = center + u*halfU;
+	Vec Puo = center - u*halfU;
+
+	Vec Pv = center + v*halfV;
+	Vec Pvo = center - v*halfV;
+
+	Vec Pw = center + w*halfW;
+	Vec Pwo = center - w*halfW;
+
 }
