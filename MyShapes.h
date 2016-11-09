@@ -32,9 +32,8 @@ public:
 class Triangle : public Shape
 {
 	Vec p1, p2, p3, nor;	//as in three point and the normal
-	Vec edge1, edge2;
 
-	///Help functions
+	///Help functions to calculate determinant
 	float det(Vec c1, Vec c2, Vec c3);
 
 public:
@@ -53,14 +52,14 @@ class OBB : public Shape
 	Vec w;
 
 	Vec Pu;
-	Vec Puo;
+	Vec Puo;		//the centers of the planes, all 6
 	Vec Pv;
 	Vec Pvo;
 	Vec Pw;
 	Vec Pwo;
 
 	float halfU;
-	float halfV;	//half-distance
+	float halfV;	//half-distance. centerpoint --> center of planes
 	float halfW;
 
 public:

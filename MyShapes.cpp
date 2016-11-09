@@ -123,7 +123,7 @@ float Triangle::det(Vec c1, Vec c2, Vec c3)
 	float determinant = 0;
 
 
-	///Creates a matrix with the parameters
+	///Creates a matrix with the vector parameters
 	int matrix[3][3];
 
 	matrix[0][0] = c1.x;	matrix[0][1] = c2.x;	matrix[0][2] = c3.x;
