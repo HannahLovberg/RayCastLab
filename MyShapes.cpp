@@ -14,21 +14,21 @@ void Plane::test(Ray & ray, HitData & hit)
 	if (n.Dot(ray.d) != 0)
 	{
 		float k = -n.Dot(n*d);
-		float t = (-n.Dot(ray.o) - k) / (n.Dot(ray.d));		//Distance from ray's origin
-
-		if (t < hit.t || hit.t < 0)
+		float t = (-n.Dot(ray.o) - k) / (n.Dot(ray.d));		//t = distance from ray's origin
+															//We find the hit point
+		if (t < hit.t || hit.t < 0)	//Make sure the ray hit the hitpoint and not anything else before it
 		{
 			hit.t = t;
 			hit.color = c;
 			hit.lastNormal = n;
-			hit.lastShape = this;
+			hit.lastShape = this;		//Set the shape
 		}
 	}
 }
 
 Vec Plane::normal(Vec & point)
 {
-	return this->n;
+	return this->n;		//We already have a normalized vector
 }
 
 
@@ -50,25 +50,26 @@ void Sphere::test(Ray& ray, HitData& hit)
 	float k = (ray.o - center).Dot(ray.o - center) - radius2;
 	float b = i*i - k;
 
+	
 
 	if (b >= 0)
 	{	
 		
 		float t1 = -i + sqrt(b);
-		float t2 = -i - sqrt(b);
+		float t2 = -i - sqrt(b);	//Here we calculate t1 and t2
 
-		if (t1 > t2)
+		if (t1 > t2)				//The smallest first
 		{
 			std::swap(t1, t2);
 		}
 		
-		if (t1 > 0)		//Om sfären är framför kameran
+		if (t1 > 0)							//If the sphere is behind the camera.
 		{
-			if (t1 < hit.t || hit.t < 0)
+			if (t1 < hit.t || hit.t < 0)	//If the the ray hits the shape and not anything else before it
 			{
 				hit.t = t1;
 				hit.color = c;
-				hit.lastNormal = normal(ray.o);
+				hit.lastNormal = normal(ray.o + ray.d * t1); //We need the normal between the center and the hitpoint
 				hit.lastShape = this;
 			}
 			
@@ -80,7 +81,7 @@ void Sphere::test(Ray& ray, HitData& hit)
 			{
 				hit.t = t2;
 				hit.color = c;
-				hit.lastNormal = normal(ray.o);
+				hit.lastNormal = normal(ray.o + ray.d * t2);
 				hit.lastShape = this;
 			}
 		}
@@ -154,14 +155,14 @@ void Triangle::test(Ray& ray, HitData& hit)
 	//T is the distance
 	
 	float t = TUV.x;
-	float u = TUV.y;		//simplify
+	float u = TUV.y;		//to simplify calculations later
 	float v = TUV.z;
 
 	if (t > 0)
 	{
 		if (u >= 0 && v >= 0 && (u + v) <= 1)		//if the point is within the triangle this is true
 		{
-			if (t < hit.t || hit.t < 0)
+			if (t < hit.t || hit.t < 0)		//If the the ray hits the shape and not anything else before it
 			{
 				hit.t = t;
 				hit.color = c;
@@ -191,8 +192,8 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->halfV = halfV;
 	this->halfW = halfW;
 
-	this->Pu = center + u*halfU;
-	this->Puo = center - u*halfU;
+	this->Pu = center + u*halfU;		//Centerpoints for each plane
+	this->Puo = center - u*halfU;		// Pu and Puo is opposite of each other and so on...
 
 	this->Pv = center + v*halfV;
 	this->Pvo = center - v*halfV;
@@ -207,8 +208,8 @@ OBB::OBB(Vec center, float halfU, float halfV, float halfW, Color color)
 {
 	this->center = center;
 
-	this->u = { 1,0,0 };
-	this->v = { 0,1,0 };
+	this->u = { 1,0,0 };		//We don't get these in the parameter
+	this->v = { 0,1,0 };		//Otherwise everything 's the same
 	this->w = { 0,0,1 };
 
 	this->halfU = halfU;
@@ -229,26 +230,26 @@ OBB::OBB(Vec center, float halfU, float halfV, float halfW, Color color)
 
 void OBB::test(Ray& ray, HitData& hit)
 {
-	float tMin = -INFINITY;
+	float tMin = -INFINITY;		//These values, if nothing else, are ignored later on.
 	float tMax = INFINITY;
 
-	float t1, t2;
+	float t1, t2;				//Our hitpoints
 
-	float intersect = tMax;
+	float intersect = tMax;		//Future intersect. It might be INFINITY
 
 	Vec norm[3] = { u,v,w };
-	float half[3] = { halfU, halfV, halfW };
-	float e;
+	float half[3] = { halfU, halfV, halfW };	// For my awesome for-loop
+	float e;			
 	float f;
 
 	float epsilon = 0.0000000001;		//that funny e thing in the book that's not an e
 
-	Vec p = center - ray.o;	
+	Vec p = center - ray.o;				//the vector between the centerpoint and the start of the ray
 
 	for (int i = 0; i < 3; i++)
 	{
-		e = norm[i].Dot(p);
-		f = norm[i].Dot(ray.d);
+		e = norm[i].Dot(p);			//parallel with the p vector (c--->hit)
+		f = norm[i].Dot(ray.d);		//parallel wih the ray	
 
 		if (f > epsilon)
 		{
@@ -264,19 +265,19 @@ void OBB::test(Ray& ray, HitData& hit)
 
 		}
 
-		else if (-e - half[i] > 0 || -e + half[i] < 0) return;
+		else if (-e - half[i] > 0 || -e + half[i] < 0) return;		//Checks if the point is within the slab?
 	}
-	if (tMin > 0)
+	if (tMin > 0)	//Is the shape in front of the camera?
 	{
-		intersect = tMin;
+		intersect = tMin;		//otherwise this value will be INFINITY and ignored.
 	}
 
-	if (intersect < hit.t || hit.t < 0)
+	if (intersect < hit.t || hit.t < 0) //If the the ray hits the shape and not anything else before it
 	{
 		hit.t = intersect;
 		hit.color = c;
 		hit.lastShape = this;
-		hit.lastNormal = normal(ray.o + ray.d*intersect);
+		hit.lastNormal = normal(ray.o + ray.d*intersect);	
 		
 	}
 	
@@ -289,11 +290,11 @@ Vec OBB::normal(Vec& point)
 
 	for (int i = 0; i < 6; i++)
 	{
-		if (norm[i].Dot(point - mP[i]) == 0)
-		{
-			return norm[i];
+		if (norm[i].Dot(point - mP[i]) == 0)		//The center of each plane dot the vector 
+		{											//between the hitP and the center of the plane
+			return norm[i];							//If this is 0 then it's a hit
 		}
 		
 	}
-	return Vec { 0,0,0 };
+	return Vec { 0,0,0 };		//If not just return any Vector
 }
