@@ -52,8 +52,12 @@ class OBB : public Shape
 	Vec v;
 	Vec w;
 
-	Vec offsetUN = center - u;
-	Vec offsetUP = center + u;
+	Vec Pu;
+	Vec Puo;
+	Vec Pv;
+	Vec Pvo;
+	Vec Pw;
+	Vec Pwo;
 
 	float halfU;
 	float halfV;	//half-distance

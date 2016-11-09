@@ -185,6 +185,15 @@ OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW,
 	this->halfV = halfV;
 	this->halfW = halfW;
 
+	this->Pu = center + u*halfU;
+	this->Puo = center - u*halfU;
+
+	this->Pv = center + v*halfV;
+	this->Pvo = center - v*halfV;
+
+	this->Pw = center + w*halfW;
+	this->Pwo = center - w*halfW;
+
 	this->c = color;
 }
 
@@ -212,7 +221,7 @@ void OBB::test(Ray& ray, HitData& hit)
 	float e;
 	float f;
 
-	float ee = 0.000000001;
+	float ee = 0.0000000001;
 
 	Vec p = center - ray.o;	
 
@@ -247,6 +256,7 @@ void OBB::test(Ray& ray, HitData& hit)
 		hit.t = intersect;
 		hit.color = c;
 		hit.lastShape = this;
+		hit.lastNormal = normal(ray.o + ray.d*intersect);
 		
 	}
 	
@@ -254,13 +264,16 @@ void OBB::test(Ray& ray, HitData& hit)
 
 Vec OBB::normal(Vec& point)
 {
-	Vec Pu = center + u*halfU;
-	Vec Puo = center - u*halfU;
+	Vec norm[6] = { u, u*-1, v, v*-1, w, w*-1 };
+	Vec mP[6] = { Pu, Puo, Pv, Pvo, Pw, Pwo };
 
-	Vec Pv = center + v*halfV;
-	Vec Pvo = center - v*halfV;
-
-	Vec Pw = center + w*halfW;
-	Vec Pwo = center - w*halfW;
-
+	for (int i = 0; i < 6; i++)
+	{
+		if (norm[i].Dot(point - mP[i]) == 0)
+		{
+			return norm[i];
+		}
+		
+	}
+	
 }
