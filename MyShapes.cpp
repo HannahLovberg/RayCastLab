@@ -37,8 +37,10 @@ Vec Plane::normal(Vec & point)
 Sphere::Sphere(Vec center, float radius, Color color)
 {
 	this->center = center;
+
 	this->radius = radius;
 	this->radius2 = radius*radius;
+
 	this->c = color;
 }
 
@@ -60,7 +62,7 @@ void Sphere::test(Ray& ray, HitData& hit)
 			std::swap(t1, t2);
 		}
 		
-		if (t1 > 0)		//Om den är framför kameran
+		if (t1 > 0)		//Om sfären är framför kameran
 		{
 			if (t1 < hit.t || hit.t < 0)
 			{
@@ -111,6 +113,8 @@ Triangle::Triangle(Vec p1, Vec p2, Vec p3, Color color)
 	this->nor.x = (A.y*B.z) - (A.z*B.y);
 	this->nor.y = (A.z*B.x) - (A.x*B.z);
 	this->nor.z = (A.x*B.y) - (A.y*B.x);
+
+	this->nor.Normalize();
 }
 
 float Triangle::det(Vec c1, Vec c2, Vec c3)
@@ -172,6 +176,8 @@ Vec Triangle::normal(Vec &point)
 {
 	return nor;
 }
+
+///////////////////////////////////OBB/////////////////////////////
 
 
 OBB::OBB(Vec center, Vec u, Vec v, Vec w, float halfU, float halfV, float halfW, Color color)
@@ -235,7 +241,7 @@ void OBB::test(Ray& ray, HitData& hit)
 	float e;
 	float f;
 
-	float ee = 0.0000000001;
+	float epsilon = 0.0000000001;		//that funny e thing in the book that's not an e
 
 	Vec p = center - ray.o;	
 
@@ -244,7 +250,7 @@ void OBB::test(Ray& ray, HitData& hit)
 		e = norm[i].Dot(p);
 		f = norm[i].Dot(ray.d);
 
-		if (f > ee)
+		if (f > epsilon)
 		{
 			t1 = (e + half[i]) / f;
 			t2 = (e - half[i]) / f;
