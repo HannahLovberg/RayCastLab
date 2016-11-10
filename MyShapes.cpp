@@ -57,13 +57,13 @@ void Sphere::test(Ray& ray, HitData& hit)
 		
 		float t1 = -i + sqrt(b);
 		float t2 = -i - sqrt(b);	//Here we calculate t1 and t2
-
-		if (t1 > t2)				//The smallest first
-		{
+									
+		if (t1 > t2)				//We want the smallest first. The one closest to the origin of
+		{							//the ray and the one further away second.
 			std::swap(t1, t2);
 		}
 		
-		if (t1 > 0)							//If the sphere is behind the camera.
+		if (t1 > 0)							//We check if t1 is in front of the camera.
 		{
 			if (t1 < hit.t || hit.t < 0)	//If the the ray hits the shape and not anything else before it
 			{
@@ -75,8 +75,8 @@ void Sphere::test(Ray& ray, HitData& hit)
 			
 		}
 
-		else if (t2 > 0) 
-		{
+		else if (t2 > 0)	//If t1 isn't before the camera we check if t2 are. If not we don't have to draw the sphere.
+		{					
 			if (t2 < hit.t || hit.t < 0) 
 			{
 				hit.t = t2;
@@ -155,14 +155,14 @@ void Triangle::test(Ray& ray, HitData& hit)
 	//T is the distance
 	
 	float t = TUV.x;
-	float u = TUV.y;		//to simplify 
-	float v = TUV.z;
+	float u = TUV.y;		//Where u and v are base vectors in an alternative plane and are used to
+	float v = TUV.z;		//express all the points in that plane
 
 	if (t > 0)
 	{
-		if (u >= 0 && v >= 0 && (u + v) <= 1)		//if the point is within the triangle this is true
-		{
-			if (t < hit.t || hit.t < 0)		//If the the ray hits the shape and not anything else before it
+		if (u >= 0 && v >= 0 && (u + v) <= 1)	//Here we make sure that the point we found is within the triangle
+		{										//If it isn't there's no hit
+			if (t < hit.t || hit.t < 0)		 
 			{
 				hit.t = t;
 				hit.color = c;
@@ -230,12 +230,12 @@ OBB::OBB(Vec center, float halfU, float halfV, float halfW, Color color)
 
 void OBB::test(Ray& ray, HitData& hit)
 {
-	float tMin = -INFINITY;		//These values, if nothing else, are ignored later on.
+	float tMin = -INFINITY;		
 	float tMax = INFINITY;
 
 	float t1, t2;				//Our hitpoints
 
-	float intersect = tMax;		//Future intersect. It might be INFINITY in the end
+	float intersect;		
 
 	Vec norm[3] = { u,v,w };
 	float half[3] = { halfU, halfV, halfW };	
@@ -271,11 +271,11 @@ void OBB::test(Ray& ray, HitData& hit)
 		//then this line checks if the ray hits the thrid slab, if not that means there's no hit
 
 	}
-	if (tMin > 0)	//Checks if th shape is in front of the camera
+	if (tMin > 0)	//Check if tMin is before the camera and makes it the intersect
 	{
-		intersect = tMin;		//otherwise this value will be INFINITY and ignored.
+		intersect = tMin;		
 	}
-	else
+	else			
 	{
 		intersect = tMax;
 	}
@@ -303,7 +303,7 @@ Vec OBB::normal(Vec& point)
 	for (int i = 0; i < 6; i++)
 	{
 		if (abs(norm[i].Dot(point - mP[i])) < epsilon)		//The center of each plane dot the vector 
-		{											//between the hitP and the center of the plane
+		{											//between the hitPoint and the center of the plane
 			n = norm[i];							//If this is 0 then it's a hit
 		}
 		

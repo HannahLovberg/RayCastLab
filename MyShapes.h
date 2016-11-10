@@ -33,7 +33,7 @@ class Triangle : public Shape
 {
 	Vec p1, p2, p3, nor;	//as in three point and the normal
 
-	///Help functions to calculate determinant
+	///Help-function to calculate determinant
 	float det(Vec c1, Vec c2, Vec c3);
 
 public:
