@@ -11,7 +11,7 @@ Plane::Plane(Vec normal, float d, Color color)
 
 void Plane::test(Ray & ray, HitData & hit)
 {
-	if (n.Dot(ray.d) != 0)
+	if (n.Dot(ray.d) != 0)		//make sure the plane isn't parallel with the ray (epsilon could be used?)
 	{
 		float k = -n.Dot(n*d);
 		float t = (-n.Dot(ray.o) - k) / (n.Dot(ray.d));		//t = distance from ray's origin
@@ -112,13 +112,13 @@ Triangle::Triangle(Vec p1, Vec p2, Vec p3, Color color)
 	Vec B = p3 - p1;
 
 	this->nor.x = (A.y*B.z) - (A.z*B.y);
-	this->nor.y = (A.z*B.x) - (A.x*B.z);
+	this->nor.y = (A.z*B.x) - (A.x*B.z);		//Crossproduct to get the normal
 	this->nor.z = (A.x*B.y) - (A.y*B.x);
 
 	this->nor.Normalize();
 }
 
-float Triangle::det(Vec c1, Vec c2, Vec c3)
+float Triangle::det(Vec c1, Vec c2, Vec c3)		//The help-function
 {
 	float determinant = 0;
 
@@ -149,13 +149,13 @@ void Triangle::test(Ray& ray, HitData& hit)
 	Vec e2 = p3 - p1;
 	Vec s = ray.o - p1;
 
-	Vec TUV = { det(s, e1, e2), det(ray.d*-1, s, e2), det(ray.d*-1, e1, s)};
+	Vec TUV = { det(s, e1, e2), det(ray.d*-1, s, e2), det(ray.d*-1, e1, s)};	//get the three unknowns t,u,v
 	TUV = TUV*(1 / det(ray.d*-1, e1, e2));
 
 	//T is the distance
 	
 	float t = TUV.x;
-	float u = TUV.y;		//to simplify calculations later
+	float u = TUV.y;		//to simplify 
 	float v = TUV.z;
 
 	if (t > 0)
@@ -235,23 +235,23 @@ void OBB::test(Ray& ray, HitData& hit)
 
 	float t1, t2;				//Our hitpoints
 
-	float intersect = tMax;		//Future intersect. It might be INFINITY
+	float intersect = tMax;		//Future intersect. It might be INFINITY in the end
 
 	Vec norm[3] = { u,v,w };
-	float half[3] = { halfU, halfV, halfW };	// For my awesome for-loop
+	float half[3] = { halfU, halfV, halfW };	
 	float e;			
 	float f;
 
 	float epsilon = 0.0001;		//that funny e thing in the book that's not an e
 
-	Vec p = center - ray.o;				//the vector between the centerpoint and the start of the ray
+	Vec p = center - ray.o;			//the vector between the centerpoint and the start of the ray
 
 	for (int i = 0; i < 3; i++)
 	{
-		e = norm[i].Dot(p);			//parallel with the p vector (c--->hit)
-		f = norm[i].Dot(ray.d);		//parallel wih the ray	
+		e = norm[i].Dot(p);			
+		f = norm[i].Dot(ray.d);		//The cosinus angle between the normal and ray.d
 
-		if (abs(f) > epsilon)
+		if (abs(f) > epsilon)	//makes sure the normal isn't parallel with the ray
 		{
 			t1 = (e + half[i]) / f;
 			t2 = (e - half[i]) / f;
