@@ -248,16 +248,16 @@ void OBB::test(Ray& ray, HitData& hit)
 
 	for (int i = 0; i < 3; i++)
 	{
-		e = norm[i].Dot(p);			
+		e = norm[i].Dot(p);			//plane between planes
 		f = norm[i].Dot(ray.d);		//The cosinus angle between the normal and ray.d
 
 		if (abs(f) > epsilon)	//makes sure the normal isn't parallel with the ray
 		{
-			t1 = (e + half[i]) / f;
-			t2 = (e - half[i]) / f;
-
+			t1 = (e + half[i]) / f;			//where the ray goes through plane1
+			t2 = (e - half[i]) / f;			//where the ray goes through plane2
+		
 			if (t1 > t2) std::swap(t1, t2);		//Make sure the smallest value is first
-			if (t1 > tMin) tMin = t1;
+			if (t1 > tMin) tMin = t1;			
 			if (t2 < tMax) tMax = t2;
 
 			if (tMin > tMax) return;
@@ -274,6 +274,10 @@ void OBB::test(Ray& ray, HitData& hit)
 	if (tMin > 0)	//Checks if th shape is in front of the camera
 	{
 		intersect = tMin;		//otherwise this value will be INFINITY and ignored.
+	}
+	else
+	{
+		intersect = tMax;
 	}
 
 	if (intersect < hit.t || hit.t < 0) //If the the ray hits the shape and not anything else before it
